@@ -25,7 +25,7 @@ import (
 
 	"github.com/crossplane/terrajet/pkg/pipeline"
 
-	"github.com/crossplane-contrib/provider-jet-template/config"
+	"github.com/timgchile/provider-jet-cloudamqp/config"
 )
 
 func main() {

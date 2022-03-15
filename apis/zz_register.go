@@ -22,15 +22,25 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	v1alpha1 "github.com/crossplane-contrib/provider-jet-template/apis/null/v1alpha1"
-	v1alpha1apis "github.com/crossplane-contrib/provider-jet-template/apis/v1alpha1"
+	v1alpha1 "github.com/timgchile/provider-jet-cloudamqp/apis/cloudamqp/v1alpha1"
+	v1alpha1custom "github.com/timgchile/provider-jet-cloudamqp/apis/custom/v1alpha1"
+	v1alpha1integration "github.com/timgchile/provider-jet-cloudamqp/apis/integration/v1alpha1"
+	v1alpha1plugin "github.com/timgchile/provider-jet-cloudamqp/apis/plugin/v1alpha1"
+	v1alpha1security "github.com/timgchile/provider-jet-cloudamqp/apis/security/v1alpha1"
+	v1alpha1apis "github.com/timgchile/provider-jet-cloudamqp/apis/v1alpha1"
+	v1alpha1vpc "github.com/timgchile/provider-jet-cloudamqp/apis/vpc/v1alpha1"
 )
 
 func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
+		v1alpha1custom.SchemeBuilder.AddToScheme,
+		v1alpha1integration.SchemeBuilder.AddToScheme,
+		v1alpha1plugin.SchemeBuilder.AddToScheme,
+		v1alpha1security.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,
+		v1alpha1vpc.SchemeBuilder.AddToScheme,
 	)
 }
 

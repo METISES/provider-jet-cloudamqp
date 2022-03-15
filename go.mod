@@ -1,4 +1,4 @@
-module github.com/crossplane-contrib/provider-jet-template
+module github.com/timgchile/provider-jet-cloudamqp
 
 go 1.17
 

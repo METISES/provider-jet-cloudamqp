@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - master
       - release-*
   pull_request: {}
   workflow_dispatch: {}
@@ -19,6 +19,7 @@ env:
   # credentials have been provided before trying to run steps that need them.
   DOCKER_USR: ${{ secrets.DOCKER_USR }}
   AWS_USR: ${{ secrets.AWS_USR }}
+  VERSION: v1.0.0
 
 jobs:
   detect-noop:
@@ -301,28 +302,24 @@ jobs:
         with:
           name: output
           path: _output/**
-      
-      - name: Login to Docker
+
+      - name: Login to GCP Image Registry
         uses: docker/login-action@v1
-        if: env.DOCKER_USR != ''
         with:
-          username: ${{ secrets.DOCKER_USR }}
-          password: ${{ secrets.DOCKER_PSW }}
-      
-      - name: Publish Artifacts to S3 and Docker Hub
-        run: make -j2 publish BRANCH_NAME=${GITHUB_REF##*/}
-        if: env.AWS_USR != '' && env.DOCKER_USR != ''
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_USR }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PSW }}
-          GIT_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Promote Artifacts in S3 and Docker Hub
-        if: github.ref == 'refs/heads/main' && env.AWS_USR != '' && env.DOCKER_USR != ''
-        run: make -j2 promote
-        env:
-          BRANCH_NAME: main
-          CHANNEL: main
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_USR }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PSW }}
-        
+          registry: us-central1-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.METISES_GCP_SA }}
+
+      - name: Push images
+        shell: bash
+        run: |
+          docker tag us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-amd64 us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-amd64:${{ env.VERSION }}
+          docker tag us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-arm64 us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-arm64:${{ env.VERSION }}
+          docker tag us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-amd64 us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-amd64:${{ env.VERSION }}
+          docker tag us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-arm64 us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-arm64:${{ env.VERSION }}
+          docker push us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-amd64:${{ env.VERSION }}
+          docker push us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-arm64:${{ env.VERSION }}
+          docker push us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-amd64:${{ env.VERSION }}
+          docker push us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-arm64:${{ env.VERSION }}
+          docker tag us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller-amd64 us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller
+          docker push us-central1-docker.pkg.dev/metises-com/crossplane/provider-jet-cloudamqp-controller

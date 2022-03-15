@@ -21,16 +21,38 @@ import (
 
 	"github.com/crossplane/terrajet/pkg/controller"
 
-	resource "github.com/crossplane-contrib/provider-jet-template/internal/controller/null/resource"
-	providerconfig "github.com/crossplane-contrib/provider-jet-template/internal/controller/providerconfig"
+	alarm "github.com/timgchile/provider-jet-cloudamqp/internal/controller/cloudamqp/alarm"
+	instance "github.com/timgchile/provider-jet-cloudamqp/internal/controller/cloudamqp/instance"
+	notification "github.com/timgchile/provider-jet-cloudamqp/internal/controller/cloudamqp/notification"
+	plugin "github.com/timgchile/provider-jet-cloudamqp/internal/controller/cloudamqp/plugin"
+	webhook "github.com/timgchile/provider-jet-cloudamqp/internal/controller/cloudamqp/webhook"
+	domain "github.com/timgchile/provider-jet-cloudamqp/internal/controller/custom/domain"
+	log "github.com/timgchile/provider-jet-cloudamqp/internal/controller/integration/log"
+	metric "github.com/timgchile/provider-jet-cloudamqp/internal/controller/integration/metric"
+	community "github.com/timgchile/provider-jet-cloudamqp/internal/controller/plugin/community"
+	providerconfig "github.com/timgchile/provider-jet-cloudamqp/internal/controller/providerconfig"
+	firewall "github.com/timgchile/provider-jet-cloudamqp/internal/controller/security/firewall"
+	gcppeering "github.com/timgchile/provider-jet-cloudamqp/internal/controller/vpc/gcppeering"
+	peering "github.com/timgchile/provider-jet-cloudamqp/internal/controller/vpc/peering"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		resource.Setup,
+		alarm.Setup,
+		instance.Setup,
+		notification.Setup,
+		plugin.Setup,
+		webhook.Setup,
+		domain.Setup,
+		log.Setup,
+		metric.Setup,
+		community.Setup,
 		providerconfig.Setup,
+		firewall.Setup,
+		gcppeering.Setup,
+		peering.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err

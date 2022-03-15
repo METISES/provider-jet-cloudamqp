@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	resourcePrefix = "template"
-	modulePath     = "github.com/crossplane-contrib/provider-jet-template"
+	resourcePrefix = "cloudamqp"
+	modulePath     = "github.com/timgchile/provider-jet-cloudamqp"
 )
 
 //go:embed schema.json
